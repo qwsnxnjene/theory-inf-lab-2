@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1600</width>
-    <height>1080</height>
+    <height>1019</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,9 +47,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>380</y>
-      <width>461</width>
-      <height>381</height>
+      <y>390</y>
+      <width>620</width>
+      <height>471</height>
      </rect>
     </property>
     <property name="font">
@@ -97,8 +97,8 @@
    <widget class="QPushButton" name="loadImageButton">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>450</y>
+      <x>680</x>
+      <y>430</y>
       <width>151</width>
       <height>23</height>
      </rect>
@@ -108,10 +108,13 @@
     </property>
    </widget>
    <widget class="QPushButton" name="analyzeImageButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>480</y>
+      <x>680</x>
+      <y>460</y>
       <width>151</width>
       <height>23</height>
      </rect>
@@ -159,37 +162,14 @@
    <widget class="QLabel" name="labelExactImage">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>580</y>
+      <x>700</x>
+      <y>500</y>
       <width>131</width>
       <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>Точная оценка энтропии:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelAprxImage">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>520</y>
-      <width>131</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Грубая оценка энтропии:</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="widgetPixels" native="true">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>380</y>
-      <width>921</width>
-      <height>461</height>
-     </rect>
+     <string>Оценка энтропии:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_7">
@@ -214,7 +194,7 @@
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>20</x>
       <y>360</y>
       <width>191</width>
       <height>21</height>
@@ -227,7 +207,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Частотный анализ по пикселям</string>
+     <string>Черно-белый вариант</string>
     </property>
    </widget>
    <widget class="QWidget" name="widgetLetters_2" native="true">
@@ -240,6 +220,47 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>890</x>
+      <y>390</y>
+      <width>620</width>
+      <height>471</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>930</x>
+      <y>360</y>
+      <width>191</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Оригинал</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -247,7 +268,7 @@
      <x>0</x>
      <y>0</y>
      <width>1600</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

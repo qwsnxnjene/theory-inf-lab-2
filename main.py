@@ -34,6 +34,7 @@ class PlotWidget(FigureCanvas):
         plt.bar(sorted_letters, sorted_counts, color='skyblue')
         ax = plt.gca()
         ax.yaxis.set_major_locator(ticker.MultipleLocator(0.01))
+        plt.ylabel("Вероятность")
 
         plt.title(title)
         plt.grid(axis='y')
@@ -46,7 +47,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.widgetLetters.setLayout(QVBoxLayout())
-        self.widgetPixels.setLayout(QVBoxLayout())
         self.widgetLetters_2.setLayout(QVBoxLayout())
 
         self.loadBookButton.clicked.connect(self.load_book)
@@ -110,21 +110,39 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file, _ = QtWidgets.QFileDialog.getOpenFileName(self,
                                                         'Open File',
                                                         './',
-                                                        'Image (*.jpg)')
+                                                        'Images (*.jpg *.png)')
         if not file:
             return
         img = Image.open(file)
-        img = img.convert("L")
-        self.image = img
+        img_bw = img.convert("L")
+        self.image = img_bw
+
+        rgb_image = img_bw.convert("RGB")
+        width, height = rgb_image.size
+        data = rgb_image.tobytes("raw", "RGB")
+        qimage = QImage(data, width, height, QImage.Format.Format_RGB888)
+        pixmap = QPixmap.fromImage(qimage)
+
+        h = int((pixmap.height() * self.label_2.width()) / pixmap.width())
+        self.label_2.resize(self.label_2.width(), h)
+        self.label_2.setPixmap(pixmap)
+        self.label_2.setMinimumSize(1, 1)
+        self.label_2.setScaledContents(True)
+
         rgb_image = img.convert("RGB")
         width, height = rgb_image.size
         data = rgb_image.tobytes("raw", "RGB")
         qimage = QImage(data, width, height, QImage.Format.Format_RGB888)
         pixmap = QPixmap.fromImage(qimage)
-        self.label_2.setPixmap(pixmap)
-        self.label_2.setMinimumSize(1, 1)
-        self.label_2.setScaledContents(True)
-        self.pixels = img.getdata()
+
+        h = int((pixmap.height() * self.label_3.width()) / pixmap.width())
+        self.label_3.resize(self.label_3.width(), h)
+        self.label_3.setPixmap(pixmap)
+        self.label_3.setMinimumSize(1, 1)
+        self.label_3.setScaledContents(True)
+        self.pixels = img_bw.getdata()
+
+        self.analyzeImageButton.setEnabled(True)
 
     def analyze_image(self):
         pixelsCount = {k: 0 for k in range(256)}
@@ -132,15 +150,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for i in self.pixels:
             pixelsCount[int(i)] += 1
         probs = {pixel: pixelsCount[pixel] / allPixels for pixel in pixelsCount}
-        print(probs)
         entropy = 0
         for x in probs.keys():
             if probs[x] != 0:
                 entropy += -1 * probs[x] * math.log2(probs[x])
-        self.labelAprxImage.setText(self.labelAprxImage.text() + "\n" + str(round(entropy, 3)))
-        plot_widget = PlotWidget(self.widgetPixels)
-        self.widgetPixels.layout().addWidget(plot_widget)
-        plot_widget.plot(probs, "Для всей книги")
+        self.labelExactImage.setText(self.labelExactImage.text() + "\n" + str(round(entropy, 3)))
 
 
 app = QtWidgets.QApplication(sys.argv)
