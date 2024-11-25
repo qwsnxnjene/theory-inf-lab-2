@@ -1,9 +1,12 @@
 import math
 import sys
 
+from PIL import Image
+
 import matplotlib.pyplot as plt
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout
+from PyQt6.QtGui import QImage, QPixmap
+from PyQt6.QtWidgets import QVBoxLayout
 from matplotlib import ticker
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
@@ -43,13 +46,20 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.widgetLetters.setLayout(QVBoxLayout())
+        self.widgetPixels.setLayout(QVBoxLayout())
         self.widgetLetters_2.setLayout(QVBoxLayout())
+
         self.loadBookButton.clicked.connect(self.load_book)
         self.analyzeBookButton.clicked.connect(self.process_book)
         self.apprx_text_dict = {k: 0 for k in alphabet}
         self.exact_text_dict = {k: 0 for k in alphabet}
 
+        self.loadImageButton.clicked.connect(self.load_image)
+        self.analyzeImageButton.clicked.connect(self.analyze_image)
+
         self.text = ""
+        self.image = ''
+        self.pixels = []
         self.allCount = 0
 
     def load_book(self):
@@ -95,6 +105,42 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         plot_widget2 = PlotWidget(self.widgetLetters_2)
         self.widgetLetters_2.layout().addWidget(plot_widget2)
         plot_widget2.plot(probabilities, "Для всей книги")
+
+    def load_image(self):
+        file, _ = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                        'Open File',
+                                                        './',
+                                                        'Image (*.jpg)')
+        if not file:
+            return
+        img = Image.open(file)
+        img = img.convert("L")
+        self.image = img
+        rgb_image = img.convert("RGB")
+        width, height = rgb_image.size
+        data = rgb_image.tobytes("raw", "RGB")
+        qimage = QImage(data, width, height, QImage.Format.Format_RGB888)
+        pixmap = QPixmap.fromImage(qimage)
+        self.label_2.setPixmap(pixmap)
+        self.label_2.setMinimumSize(1, 1)
+        self.label_2.setScaledContents(True)
+        self.pixels = img.getdata()
+
+    def analyze_image(self):
+        pixelsCount = {k: 0 for k in range(256)}
+        allPixels = len(self.pixels)
+        for i in self.pixels:
+            pixelsCount[int(i)] += 1
+        probs = {pixel: pixelsCount[pixel] / allPixels for pixel in pixelsCount}
+        print(probs)
+        entropy = 0
+        for x in probs.keys():
+            if probs[x] != 0:
+                entropy += -1 * probs[x] * math.log2(probs[x])
+        self.labelAprxImage.setText(self.labelAprxImage.text() + "\n" + str(round(entropy, 3)))
+        plot_widget = PlotWidget(self.widgetPixels)
+        self.widgetPixels.layout().addWidget(plot_widget)
+        plot_widget.plot(probs, "Для всей книги")
 
 
 app = QtWidgets.QApplication(sys.argv)
